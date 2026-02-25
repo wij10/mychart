@@ -1,0 +1,68 @@
+suite: test deployment
+templates:
+  - deployment.yaml
+tests:
+  - it: set image tag should work
+    set:
+      image.tag: 1.0.0
+    asserts:
+      - isKind:
+          of: Deployment
+      - matchRegex:
+          path: metadata.name
+          pattern: -mychart$
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: nginx:1.0.0
+  - it: set resources should work
+    set:
+      resources.requests.cpu: 200m
+      resources.requests.memory: 512Mi
+      resources.limits.memory: 512Mi
+    asserts:
+      - isKind:
+          of: Deployment
+      - matchRegex:
+          path: metadata.name
+          pattern: -mychart$
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 200m
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: 512Mi
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: 512Mi
+  - it: unset env should work
+    asserts:
+      - isKind:
+          of: Deployment
+      - matchRegex:
+          path: metadata.name
+          pattern: -mychart$
+      - notExists:
+          path: spec.template.spec.containers[0].env
+  - it: set env should work
+    set:
+      env:
+        foo: bar
+        hello: world
+    asserts:
+      - isKind:
+          of: Deployment
+      - matchRegex:
+          path: metadata.name
+          pattern: -mychart$
+      - equal:
+          path: spec.template.spec.containers[0].env[0].name
+          value: foo
+      - equal:
+          path: spec.template.spec.containers[0].env[0].value
+          value: bar
+      - equal:
+          path: spec.template.spec.containers[0].env[1].name
+          value: hello
+      - equal:
+          path: spec.template.spec.containers[0].env[1].value
+          value: world

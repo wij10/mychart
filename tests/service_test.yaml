@@ -1,0 +1,16 @@
+suite: test service
+templates:
+  - service.yaml
+tests:
+  - it: service port should work
+    set:
+      service.port: 8080
+    asserts:
+      - isKind:
+          of: Service
+      - matchRegex:
+          path: metadata.name
+          pattern: -mychart$
+      - equal:
+          path: spec.ports[0].port
+          value: 8080

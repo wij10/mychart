@@ -29,21 +29,13 @@ readinessProbe:
   failureThreshold: 3
 affinity:
   podAntiAffinity:
-    # requiredDuringSchedulingIgnoredDuringExecution:
-    #   - labelSelector:
-    #       matchExpressions:
-    #         - key: app.kubernetes.io/name
-    #           operator: In
-    #           values:
-    #             - mychart
-    #     topologyKey: "kubernetes.io/hostname"
-    #     matchLabelKeys:
-    #       - pod-template-hash
-    preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 1
-        preference:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
           matchExpressions:
-          - key: app.kubernetes.io/name
-            operator: In
-            values:
-            - mychart
+            - key: app.kubernetes.io/name
+              operator: In
+              values:
+                - mychart
+        topologyKey: "kubernetes.io/hostname"
+        matchLabelKeys:
+          - pod-template-hash
